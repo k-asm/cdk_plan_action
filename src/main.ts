@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import {removeEscapeCharacters, sh, sleep} from './shell';
 import * as fs from 'fs';
-import {diffTemplate, formatDifferences, ResourceImpact, TemplateDiff} from '@aws-cdk/cloudformation-diff';
+import {fullDiff, formatDifferences, ResourceImpact, TemplateDiff} from '@aws-cdk/cloudformation-diff';
 import {PassThrough} from 'stream';
 import {randomUUID} from 'crypto';
 import {
@@ -63,7 +63,7 @@ async function run(): Promise<void> {
   const templateDiff: {[k: string]: TemplateDiff} = {};
   let editedStackCount = 0;
   for (const stackName of stackNames) {
-    templateDiff[stackName] = diffTemplate(cfnTemplates[stackName] ?? {}, stackTemplates[stackName]);
+    templateDiff[stackName] = fullDiff(cfnTemplates[stackName] ?? {}, stackTemplates[stackName]);
     if (templateDiff[stackName].differenceCount) editedStackCount += 1;
   }
   core.setOutput('edited-stack-count', editedStackCount);
