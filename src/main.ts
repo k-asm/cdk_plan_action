@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import {removeEscapeCharacters, sh, sleep} from './shell';
 import * as fs from 'fs';
+import {fromEnv} from '@aws-sdk/credential-providers';
 import {diffTemplate, formatDifferences, ResourceImpact, TemplateDiff} from '@aws-cdk/cloudformation-diff';
 import {PassThrough} from 'stream';
 import {randomUUID} from 'crypto';
@@ -28,7 +29,7 @@ const awsRegion = core.getInput('aws-region');
 const replaceComments = core.getBooleanInput('replace-comments');
 const commentTitle = core.getInput('comment-title');
 
-const cfnClient = new CloudFormationClient({region: awsRegion});
+const cfnClient = new CloudFormationClient({region: awsRegion, credentials: fromEnv()});
 
 async function run(): Promise<void> {
   // Synth templates
